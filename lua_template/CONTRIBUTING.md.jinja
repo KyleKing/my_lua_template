@@ -1,0 +1,144 @@
+# Contributing to {{ project_name }}
+
+Thank you for considering contributing to {{ project_name }}!
+
+## Development Setup
+
+### Prerequisites
+
+- [mise](https://mise.jdx.dev/) - Tool version manager
+- [pre-commit](https://pre-commit.com/) - Git hook framework
+- Lua {{ lua_version }}
+- [stylua](https://github.com/JohnnyMorganz/StyLua) - Lua formatter
+- [selene](https://github.com/Kampfkarren/selene) - Lua linter
+{% if project_type != 'mise-backend' -%}
+- Neovim >= 0.10.0
+{% else -%}
+- [LuaRocks](https://luarocks.org/) - Lua package manager
+- [Busted](https://lunarmodules.github.io/busted/) - Lua testing framework
+{% endif -%}
+
+### Initial Setup
+
+```bash
+# Clone the repository
+git clone {{ repository_url }}
+cd {{ project_name }}
+
+# Install mise tools
+mise install
+
+{% if project_type == 'mise-backend' -%}
+# Install Lua dependencies
+mise run install
+{% endif -%}
+
+# Install pre-commit hooks
+pre-commit install
+
+# Verify setup
+mise run ci
+```
+
+## Development Workflow
+
+### Making Changes
+
+1. Create a feature branch from `{{ development_branch }}`
+2. Make your changes
+3. Run `mise run format` to format code
+4. Run `mise run ci` to verify all checks pass
+5. Commit your changes{% if use_cz %} (commitizen will guide you){% endif %}
+6. Push and create a pull request
+
+### Code Style
+
+- Follow the [Lua Style Guide](https://github.com/luarocks/lua-style-guide)
+- Use 4 spaces for indentation
+- Maximum line length: 120 characters
+- Run `mise run format` before committing
+
+### Testing
+
+```bash
+# Run all tests
+mise run test
+
+{% if project_type == 'mise-backend' -%}
+# Run specific test file
+mise run test-file -- -f spec/specific_spec.lua
+{% else -%}
+# Run specific test file
+mise run test-file -- -f test/specific_test.lua
+{% endif -%}
+
+# Run with coverage
+{% if project_type == 'mise-backend' -%}
+busted --coverage
+{% else -%}
+mise run test
+{% endif -%}
+```
+
+### Linting and Type Checking
+
+```bash
+# Check formatting
+mise run lint
+
+# Fix formatting issues
+mise run format
+
+# Run type checker
+mise run typecheck
+
+# Run all checks
+mise run ci
+```
+
+## Pull Request Process
+
+1. Update documentation if needed
+2. Add tests for new functionality
+3. Ensure all CI checks pass
+4. Request review from maintainers
+5. Address review feedback
+
+## Commit Messages
+
+{% if use_cz -%}
+We use [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` New features
+- `fix:` Bug fixes
+- `docs:` Documentation changes
+- `style:` Code style changes (formatting)
+- `refactor:` Code refactoring
+- `test:` Test changes
+- `chore:` Build/tooling changes
+
+Commitizen will guide you through the commit message format.
+{% else -%}
+Write clear, descriptive commit messages:
+
+- Use imperative mood ("Add feature" not "Added feature")
+- First line should be 50 characters or less
+- Add detailed description if needed
+{% endif -%}
+
+## Code Review Guidelines
+
+- Be respectful and constructive
+- Focus on the code, not the person
+- Explain reasoning behind suggestions
+- Accept that there are multiple valid approaches
+
+## Getting Help
+
+- Check existing issues and discussions
+- Ask questions in pull request comments
+- Reach out to maintainers at {{ author_email }}
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.

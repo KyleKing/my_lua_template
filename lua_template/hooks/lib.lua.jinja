@@ -1,0 +1,40 @@
+{% if project_type == 'mise-backend' -%}
+-- Shared library functions for {{ project_name }} mise backend
+
+local M = {}
+
+--- Execute a shell command and return output
+---@param cmd string Command to execute
+---@return string output Command output
+function M.execute(cmd)
+    local handle = io.popen(cmd)
+    if not handle then
+        error("Failed to execute command: " .. cmd)
+    end
+    local result = handle:read("*a")
+    handle:close()
+    return result:gsub("%s+$", "")
+end
+
+--- Check if a file exists
+---@param path string File path
+---@return boolean exists True if file exists
+function M.file_exists(path)
+    local file = io.open(path, "r")
+    if file then
+        file:close()
+        return true
+    end
+    return false
+end
+
+--- Print debug message if MISE_DEBUG is set
+---@param msg string Debug message
+function M.debug(msg)
+    if os.getenv("MISE_DEBUG") == "1" then
+        print("[DEBUG] " .. msg)
+    end
+end
+
+return M
+{% endif -%}

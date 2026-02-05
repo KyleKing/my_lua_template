@@ -1,0 +1,16 @@
+{% if project_type == 'nvim-config' -%}
+-- {{ project_name }} neovim configuration
+-- Entry point for neovim config
+
+-- Set leader key
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+-- Load core configuration
+require("config.options")
+require("config.keymaps")
+require("config.autocmds")
+
+-- Load plugins
+require("config.plugins")
+{% endif -%}

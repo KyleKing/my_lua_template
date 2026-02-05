@@ -1,0 +1,5 @@
+---
+ROOT: {".luarocks/"}
+verbose: true
+coverage: true
+lpath: hooks/?.lua;hooks/?/init.lua

@@ -1,0 +1,25 @@
+{% if project_type == 'nvim-plugin' -%}
+-- Tests for {{ project_name }}
+
+local MiniTest = require("mini.test")
+
+local T = MiniTest.new_set()
+
+T["setup"] = function()
+    local {{ project_name | replace('-', '_') }} = require("{{ project_name | replace('-', '_') }}")
+
+    -- Test default setup
+    {{ project_name | replace('-', '_') }}.setup()
+    MiniTest.expect.truthy({{ project_name | replace('-', '_') }}.config)
+end
+
+T["setup with options"] = function()
+    local {{ project_name | replace('-', '_') }} = require("{{ project_name | replace('-', '_') }}")
+
+    -- Test custom options
+    {{ project_name | replace('-', '_') }}.setup({ custom_option = true })
+    MiniTest.expect.equality({{ project_name | replace('-', '_') }}.config.custom_option, true)
+end
+
+return T
+{% endif -%}

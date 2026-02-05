@@ -1,0 +1,32 @@
+# OS and Editor
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Lua
+luac.out
+
+{% if project_type == 'mise-backend' -%}
+# LuaRocks
+.luarocks/
+*.rock
+
+# Busted
+luacov.*.out
+{% endif -%}
+{% if project_type in ['nvim-config', 'nvim-plugin'] -%}
+# Neovim
+lazy-lock.json
+mason-lock.json
+deps/
+{% endif -%}
+
+# mise
+.mise.local.toml
+
+# Git
+*.rej
+*.orig

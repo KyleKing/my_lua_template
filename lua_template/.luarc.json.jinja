@@ -1,0 +1,54 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "runtime": {
+    "version": "Lua {{ lua_version }}",
+    "path": [
+      "?.lua",
+      "?/init.lua"
+    ]
+  },
+  "workspace": {
+    "library": [
+{% if project_type == 'mise-backend' -%}
+      "hooks/",
+      "metadata.lua"
+{% elif project_type == 'nvim-plugin' -%}
+      "plugin/",
+      "lua/"
+{% else -%}
+      "lua/"
+{% endif -%}
+    ],
+    "ignoreDir": [
+{% if project_type == 'mise-backend' -%}
+      ".luarocks",
+{% endif -%}
+      ".git"
+    ]
+  },
+  "diagnostics": {
+{% if project_type == 'mise-backend' -%}
+    "globals": [
+      "PLUGIN",
+      "RUNTIME"
+    ],
+    "disable": [
+      "lowercase-global"
+    ]
+{% else -%}
+    "globals": [
+      "vim"
+    ]
+{% endif -%}
+  },
+  "format": {
+    "enable": false
+  },
+  "hint": {
+    "enable": true,
+    "setType": true
+  },
+  "type": {
+    "castNumberToInteger": true
+  }
+}

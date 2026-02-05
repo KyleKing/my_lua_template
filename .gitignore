@@ -1,0 +1,27 @@
+# OS and Editor
+.DS_Store
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+.venv/
+ENV/
+
+# Copier
+.copier-answers.yml
+
+# CTT
+.ctt/
+
+# Git
+*.rej
+*.orig

@@ -1,0 +1,10 @@
+{% if project_type == 'mise-backend' -%}
+return {
+    name = "{{ project_name }}",
+    author = "{{ author_name }} <{{ author_email }}>",
+    version = "0.1.0",
+    license = "MIT",
+    description = "{{ project_description }}",
+    homepage = "{{ repository_url }}",
+}
+{% endif -%}

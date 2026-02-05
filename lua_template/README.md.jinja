@@ -1,0 +1,203 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+{% if project_type == 'mise-backend' -%}
+## Installation
+
+```bash
+# Install the backend plugin
+mise plugin install {{ project_name }} {{ repository_url }}
+
+# Use in your project
+mise use {{ project_name }}:tool@version
+```
+
+## Usage
+
+```bash
+# List available versions
+mise ls-remote {{ project_name }}:tool
+
+# Install a specific version
+mise install {{ project_name }}:tool@version
+
+# Use the tool
+mise exec {{ project_name }}:tool@version -- tool-command
+```
+
+## Development
+
+### Setup
+
+```bash
+# Install dependencies
+mise install
+luarocks install --tree=.luarocks --only-deps .
+```
+
+### Testing
+
+```bash
+# Run all tests
+mise run test
+
+# Run specific test file
+mise run test-file -- -f spec/specific_spec.lua
+```
+
+### Linting and Formatting
+
+```bash
+# Check formatting
+mise run lint
+
+# Fix formatting
+mise run format
+
+# Type checking
+mise run typecheck
+
+# Run all CI checks
+mise run ci
+```
+{% elif project_type == 'nvim-config' -%}
+## Installation
+
+```bash
+# Backup existing config
+mv ~/.config/nvim ~/.config/nvim.backup
+
+# Clone this config
+git clone {{ repository_url }} ~/.config/nvim
+
+# Start Neovim
+nvim
+```
+
+## Features
+
+- Minimal plugin configuration
+- Fast startup time
+- LSP support
+- Fuzzy finding
+- Git integration
+
+## Development
+
+### Testing
+
+```bash
+# Run all tests
+mise run test
+
+# Run specific test
+mise run test-file -- -f test/specific_test.lua
+```
+
+### Linting and Formatting
+
+```bash
+# Check formatting
+mise run lint
+
+# Fix formatting
+mise run format
+
+# Type checking
+mise run typecheck
+```
+{% else -%}
+## Installation
+
+### Using lazy.nvim
+
+```lua
+{
+  "{{ author_username }}/{{ project_name }}",
+  config = function()
+    require("{{ project_name | replace('-', '_') }}").setup()
+  end,
+}
+```
+
+### Using mini.deps
+
+```lua
+local add = MiniDeps.add
+add({
+  source = "{{ author_username }}/{{ project_name }}",
+})
+require("{{ project_name | replace('-', '_') }}").setup()
+```
+
+## Configuration
+
+```lua
+require("{{ project_name | replace('-', '_') }}").setup({
+  -- Add configuration options here
+})
+```
+
+## Development
+
+### Setup
+
+```bash
+# Install dependencies
+mise install
+```
+
+### Testing
+
+```bash
+# Download mini.nvim for testing
+mise run deps-mini-nvim
+
+# Run all tests
+mise run test
+
+# Run specific test
+mise run test-file -- -f test/specific_test.lua
+```
+
+### Linting and Formatting
+
+```bash
+# Check formatting
+mise run lint
+
+# Fix formatting
+mise run format
+
+# Type checking
+mise run typecheck
+
+# Run all CI checks
+mise run ci
+```
+{% endif -%}
+
+## Contributing
+
+Contributions are welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run `mise run ci` to verify
+5. Submit a pull request
+
+## License
+
+MIT License - see [LICENSE](LICENSE) for details
+
+## Credits
+
+- Created by [{{ author_name }}]({{ repository_provider }}/{{ author_username }})
+{% if project_type == 'mise-backend' -%}
+- Template from [my_lua_template](https://github.com/kyleking/my_lua_template)
+{% elif project_type in ['nvim-config', 'nvim-plugin'] -%}
+- Template from [my_lua_template](https://github.com/kyleking/my_lua_template)
+- Testing with [mini.test](https://github.com/echasnovski/mini.nvim/blob/main/readmes/mini-test.md)
+{% endif -%}

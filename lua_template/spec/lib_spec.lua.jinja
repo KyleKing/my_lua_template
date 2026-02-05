@@ -1,0 +1,26 @@
+{% if project_type == 'mise-backend' -%}
+describe("lib", function()
+    local lib = require("lib")
+
+    describe("execute", function()
+        it("should execute shell commands", function()
+            local result = lib.execute("echo 'test'")
+            assert.equals("test", result)
+        end)
+    end)
+
+    describe("file_exists", function()
+        it("should return false for non-existent files", function()
+            assert.is_false(lib.file_exists("/nonexistent/file/path"))
+        end)
+    end)
+
+    describe("debug", function()
+        it("should not error when called", function()
+            assert.has_no.errors(function()
+                lib.debug("test message")
+            end)
+        end)
+    end)
+end)
+{% endif -%}

@@ -1,0 +1,15 @@
+{% if project_type == 'mise-backend' -%}
+std = "lua{{ lua_version | replace('.', '') }}+{{ project_name | replace('-', '_') }}+busted"
+{% else -%}
+std = "vim" # Defined in vim.toml (https://kampfkarren.github.io/selene/usage/std.html)
+{% endif %}
+
+[lints]
+{% if project_type == 'mise-backend' -%}
+incorrect_standard_library_use = "allow"
+unused_variable = "allow"
+{% else -%}
+mixed_table = "allow"
+multiple_statements = "allow"
+undefined_variable = "allow"
+{% endif %}

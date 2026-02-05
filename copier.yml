@@ -1,0 +1,104 @@
+---
+_min_copier_version: 9.0.0
+
+# ====== TEMPLATE ======
+_answers_file: .copier-answers.yml
+_subdirectory: lua_template
+_skip_if_exists:
+  - README.md
+  - LICENSE
+  - DESIGN.md
+  - AGENTS.md
+
+_tasks:
+  - git init
+  - python _copier_post_generation.py
+
+_message_after_copy: |
+  The '{{ project_name }}' Lua project has been initialized!
+
+  1. Review the changes and commit
+  2. Install mise tools: `mise install`
+  3. Install git hooks: `pre-commit install`
+  4. Run `mise run lint` to verify setup
+  5. If this is a new project, create the GitHub repo:
+
+      ```sh
+      gh repo create "{{ project_name }}" --source=. --remote=origin --push
+      ```
+
+# ====== QUESTIONS ======
+development_branch:
+  type: str
+  help: The GitHub branch name used for development
+  default: main
+
+project_name:
+  type: str
+  help: Your project name (lowercase, hyphens allowed)
+
+project_description:
+  type: str
+  help: Your project description
+
+author_name:
+  type: str
+  help: Your full name
+  default: Kyle King
+
+author_email:
+  type: str
+  help: Your account email
+  default: dev.act.kyle@gmail.com
+
+repository_provider:
+  type: str
+  help: Your repository provider
+  default: https://github.com
+
+author_username:
+  type: str
+  help: Your username for {{ repository_provider }}
+  default: kyleking
+
+repository_namespace:
+  type: str
+  help: Your repository namespace
+  default: "{{ author_username }}"
+
+repository_url:
+  type: str
+  help: This is an internal variable where the default should be accepted.
+  default: "{{ repository_provider }}/{{ repository_namespace }}/{{ project_name }}"
+
+copyright_date:
+  type: str
+  help: The copyright year
+  default: "{{ '%Y' | strftime }}"
+
+project_type:
+  type: str
+  help: Project type determines structure and tooling (mise-backend=mise backend plugin, nvim-config=Neovim configuration, nvim-plugin=Neovim plugin)
+  choices:
+    - mise-backend
+    - nvim-config
+    - nvim-plugin
+  default: nvim-plugin
+
+lua_version:
+  type: str
+  help: Lua version (5.1 for nvim/mise compatibility, 5.4 for modern features)
+  choices:
+    - "5.1"
+    - "5.4"
+  default: "{% if project_type in ['nvim-config', 'nvim-plugin'] %}5.1{% else %}5.4{% endif %}"
+
+use_cz:
+  type: bool
+  help: Use commitizen for conventional commits
+  default: true
+
+include_ci:
+  type: bool
+  help: Include GitHub Actions CI workflow
+  default: true

@@ -1,0 +1,84 @@
+[tools]
+lua = "{{ lua_version }}"
+stylua = "latest"
+"cargo:selene" = "latest"
+{% if project_type == 'mise-backend' -%}
+
+[tasks.install]
+description = "Install dependencies with luarocks"
+run = "luarocks install --tree=.luarocks --only-deps ."
+
+[tasks.test]
+description = "Run all tests with busted"
+run = "busted"
+
+[tasks.test-file]
+description = "Run a specific test file"
+run = "busted {% raw %}{{flag(name='file')}}{% endraw %}"
+usage = '''
+flag "-f --file"
+'''
+{% else -%}
+
+[tasks."deps-mini-nvim"]
+description = "Download 'mini.nvim' to use its 'mini.test' testing module"
+run = '''
+DIRECTORY="deps/mini.nvim"
+if [ ! -d "$DIRECTORY" ]; then
+    mkdir -p "$DIRECTORY"
+    git clone --filter=blob:none https://github.com/echasnovski/mini.nvim "$DIRECTORY"
+fi
+'''
+sources = ["deps/mini.nvim"]
+
+[tasks.test]
+depends = ["deps-mini-nvim"]
+description = "Run all test files"
+{% if project_type == 'nvim-config' -%}
+run = "nvim --headless --noplugin -u ./init.lua -c \"lua require('tests.init').run_all()\""
+{% else -%}
+run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua require('{{ project_name | replace('-', '_') }}.tests.init').run_all()\""
+{% endif %}
+
+[tasks.test-file]
+depends = ["deps-mini-nvim"]
+description = "Run test from specified file"
+run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua MiniTest.run_file('{% raw %}{{flag(name='file')}}{% endraw %}')\""
+usage = '''
+flag "-f --file"
+'''
+{% endif %}
+
+[tasks.lint]
+description = "Format code using stylua (check mode)"
+{% if project_type == 'mise-backend' -%}
+run = "stylua hooks/ spec/ --check"
+{% elif project_type == 'nvim-config' -%}
+run = "stylua lua/ --check"
+{% else -%}
+run = "stylua plugin/ lua/ test/ --check"
+{% endif %}
+
+[tasks.format]
+description = "Format code using stylua (fix mode)"
+{% if project_type == 'mise-backend' -%}
+run = "stylua hooks/ spec/"
+{% elif project_type == 'nvim-config' -%}
+run = "stylua lua/"
+{% else -%}
+run = "stylua plugin/ lua/ test/"
+{% endif %}
+
+[tasks.typecheck]
+description = "Check for errors with selene"
+{% if project_type == 'mise-backend' -%}
+run = "selene hooks/ spec/"
+{% elif project_type == 'nvim-config' -%}
+run = "selene lua/"
+{% else -%}
+run = "selene plugin/ lua/ test/"
+{% endif %}
+
+[tasks.ci]
+description = "Run all CI checks"
+depends = ["lint", "typecheck", "test"]
