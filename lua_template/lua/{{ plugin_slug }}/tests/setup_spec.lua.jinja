@@ -5,19 +5,19 @@ local MiniTest = require("mini.test")
 local T = MiniTest.new_set()
 
 T["setup"] = function()
-    local {{ plugin_slug }} = require("{{ plugin_slug }}")
+    local {{ plugin_slug | replace('-', '_') }} = require("{{ plugin_slug }}")
 
     -- Test default setup
-    {{ plugin_slug }}.setup()
-    MiniTest.expect.no_equality({{ plugin_slug }}.config, nil)
+    {{ plugin_slug | replace('-', '_') }}.setup()
+    MiniTest.expect.no_equality({{ plugin_slug | replace('-', '_') }}.config, nil)
 end
 
 T["setup with options"] = function()
-    local {{ plugin_slug }} = require("{{ plugin_slug }}")
+    local {{ plugin_slug | replace('-', '_') }} = require("{{ plugin_slug }}")
 
     -- Test custom options
-    {{ plugin_slug }}.setup({ custom_option = true })
-    MiniTest.expect.equality({{ plugin_slug }}.config.custom_option, true)
+    {{ plugin_slug | replace('-', '_') }}.setup({ custom_option = true })
+    MiniTest.expect.equality({{ plugin_slug | replace('-', '_') }}.config.custom_option, true)
 end
 
 return T

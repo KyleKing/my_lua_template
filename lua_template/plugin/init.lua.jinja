@@ -2,9 +2,9 @@
 -- {{ project_name }} plugin entry point
 -- This file is automatically loaded by neovim
 
-if vim.g.loaded_{{ project_name | replace('-', '_') }} then return end
-vim.g.loaded_{{ project_name | replace('-', '_') }} = 1
+if vim.g.loaded_{{ plugin_slug | replace('-', '_') }} then return end
+vim.g.loaded_{{ plugin_slug | replace('-', '_') }} = 1
 
 -- Load the plugin module
-require("{{ project_name | replace('-', '_') }}")
+require("{{ plugin_slug }}")
 {% endif -%}

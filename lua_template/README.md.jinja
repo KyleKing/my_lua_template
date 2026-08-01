@@ -116,7 +116,7 @@ mise run typecheck
 {
   "{{ author_username }}/{{ project_name }}",
   config = function()
-    require("{{ project_name | replace('-', '_') }}").setup()
+    require("{{ plugin_slug }}").setup()
   end,
 }
 ```
@@ -128,13 +128,13 @@ local add = MiniDeps.add
 add({
   source = "{{ author_username }}/{{ project_name }}",
 })
-require("{{ project_name | replace('-', '_') }}").setup()
+require("{{ plugin_slug }}").setup()
 ```
 
 ## Configuration
 
 ```lua
-require("{{ project_name | replace('-', '_') }}").setup({
+require("{{ plugin_slug }}").setup({
   -- Add configuration options here
 })
 ```
