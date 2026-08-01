@@ -8,6 +8,9 @@ copyright_date: '{{ copyright_date }}'
 development_branch: {{ development_branch }}
 include_ci: {{ include_ci }}
 lua_version: '{{ lua_version }}'
+{% if project_type == 'nvim-plugin' -%}
+plugin_slug: {{ plugin_slug }}
+{% endif -%}
 project_description: {{ project_description }}
 project_name: {{ project_name }}
 project_type: {{ project_type }}

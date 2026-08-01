@@ -111,9 +111,9 @@ test_os_matrix:
 
 plugin_slug:
   type: str
-  help: This is an internal variable where the default should be accepted.
-  default: "{% if project_type == 'nvim-plugin' %}{{ project_name | replace('-', '_') }}{% endif %}"
-  when: false
+  help: Lua module name used in require("<plugin_slug>") and lua/<plugin_slug>/
+  default: "{% if project_type == 'nvim-plugin' %}{{ project_name | replace('.nvim', '') | replace('-', '_') }}{% endif %}"
+  when: "{{ project_type == 'nvim-plugin' }}"
 
 config_tests_dir:
   type: str
