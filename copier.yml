@@ -8,8 +8,6 @@ _skip_if_exists:
   - README.md
   - LICENSE
   - DESIGN.md
-  - AGENTS.md
-  - "**/AGENTS.md"
 
 _tasks:
   - git init

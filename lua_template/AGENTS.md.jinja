@@ -39,4 +39,6 @@ Run `mise run ci` before reporting work as done.
 - Commit messages follow Conventional Commits (`feat:`, `fix:`, `build:`); commitizen enforces this in the commit-msg hook
 {%- endif %}
 
-A directory may add its own `AGENTS.md` to extend or override this file for the code under it. Template updates never overwrite any `AGENTS.md`.
+This file is template-owned and `copier update` keeps it current. Put project-specific guidance in `AGENTS.local.md` (loaded below when present) or in a nested `AGENTS.md` scoped to its directory.
+
+@AGENTS.local.md
