@@ -49,8 +49,7 @@ depends = ["lint", "typecheck", "test"]
 description = "Download 'mini.nvim' to use its 'mini.test' testing module"
 run = '''
 DIRECTORY="deps/mini.nvim"
-if [ ! -d "$DIRECTORY" ]; then
-    mkdir -p "$DIRECTORY"
+if [ ! -d "$DIRECTORY/lua" ]; then
     git clone --filter=blob:none https://github.com/echasnovski/mini.nvim "$DIRECTORY"
 fi
 '''
