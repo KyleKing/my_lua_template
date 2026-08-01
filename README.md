@@ -1,93 +1,34 @@
 # my_lua_template
 
-Copier template for Lua projects supporting three project types:
+Copier template for Lua projects. One template, three project types:
 
-- **mise-backend**: mise backend plugins with hooks/, metadata.lua, busted testing
-- **nvim-config**: Neovim configurations with init.lua, vim.toml
-- **nvim-plugin**: Neovim plugins with plugin/, lua/, testing setup
+- `mise-backend`: mise backend plugins with `hooks/`, `metadata.lua`, and busted tests
+- `nvim-config`: a Neovim configuration with `init.lua` and mini.test
+- `nvim-plugin`: a Neovim plugin with `plugin/`, `lua/<plugin_slug>/`, and mini.test specs
 
-## Features
-
-- Robust Lua tooling: stylua, selene, lua-language-server
-- Pre-commit hooks with comprehensive checks
-- GitHub Actions CI workflows
-- mise task runner configuration
-- Conditional file generation based on project type
-- Commitizen support for conventional commits
+Generated projects get stylua, selene, emmylua_check, hk git hooks, mise tasks (`ci`, `lint`, `typecheck`, `test`, `format`), an `AGENTS.md` with a `CLAUDE.md` pointer, and optionally commitizen plus GitHub Actions CI with auto tag and release.
 
 ## Usage
 
-### Create New Project
-
 ```sh
-copier copy gh:kyleking/my_lua_template path/to/new/project
+copier copy --trust gh:KyleKing/my_lua_template path/to/new/project
 ```
 
-### Update Existing Project
+To update an existing project:
 
 ```sh
 cd path/to/project
-copier update
+copier update --trust
 ```
 
-## Requirements
+`--trust` is required because post-generation tasks run `git init` and a cleanup script.
 
-- copier >= 9.0.0
-- mise (recommended)
-- pre-commit
-- Python 3.9+
+## Template development
 
-## Template Structure
-
-```
-lua_template/
-├── .editorconfig                    # Shared: Editor config
-├── stylua.toml                      # Shared: Lua formatting
-├── selene.toml.jinja               # Conditional: Lua linting
-├── .luarc.json.jinja               # Conditional: LSP config
-├── mise.toml.jinja                 # Conditional: Task runner
-├── .pre-commit-config.yaml.jinja   # Conditional: Git hooks
-└── .github/
-    └── workflows/
-        └── ci.yml.jinja            # Conditional: CI pipeline
-```
-
-## Post-Generation
-
-The template automatically:
-
-1. Initializes git repository
-2. Cleans up conditional files based on project type
-3. Creates project-specific directory structure
-4. Removes post-generation script
-
-## Configuration Files
-
-### Shared Across All Types
-
-- `.editorconfig` - Consistent editor behavior
-- `stylua.toml` - Lua code formatting
-- `.gitignore` - Git ignore patterns
-- `LICENSE` - MIT license
-
-### Project-Type Specific
-
-**mise-backend:**
-- `hooks/` - mise backend hook scripts
-- `metadata.lua` - Plugin metadata
-- `busted.yml` - Testing configuration
-- `spec/` - Test files
-
-**nvim-config:**
-- `init.lua` - Neovim entry point
-- `lua/` - Configuration modules
-- `vim.toml` - Selene vim standard
-
-**nvim-plugin:**
-- `plugin/` - Plugin entry points
-- `lua/` - Plugin implementation
-- `test/` - Test files
-- `vim.toml` - Selene vim standard
+- `lua_template/` is the rendered tree (`_subdirectory`); `copier.yml` holds the questions
+- CI generates all three project types on every push and runs their gates
+- `python3 scripts/canary.py` runs a real `copier update` plus `mise run ci` against downstream repos listed in `scripts/canary_repos.json` (`CANARY_SIBLINGS=1` targets local sibling checkouts)
+- Releases are tagged by commitizen in the bump workflow on pushes to `main`
 
 ## License
 
