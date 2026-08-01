@@ -44,7 +44,7 @@ hooks {
     ["pre-push"] {
         steps = linters
     }
-{% if use_cz -%}
+{%- if use_cz %}
     ["commit-msg"] {
         steps {
             ["commitizen"] {
@@ -52,7 +52,7 @@ hooks {
             }
         }
     }
-{% endif -%}
+{%- endif %}
     ["fix"] {
         fix = true
         steps = linters

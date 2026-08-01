@@ -1,4 +1,4 @@
-{% if include_ci %}
+{% if include_ci -%}
 name: CI
 
 on:
@@ -10,7 +10,6 @@ on:
 
 concurrency:
   group: {% raw %}${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}{% endraw %}
-
   cancel-in-progress: true
 
 permissions:
@@ -23,7 +22,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
-{% if project_type == 'mise-backend' %}
+{%- if project_type == 'mise-backend' %}
+
       - name: Install Lua and LuaRocks
         run: |
           sudo apt-get update
@@ -33,28 +33,32 @@ jobs:
         with:
           path: .luarocks
           key: luarocks-{% raw %}${{ runner.os }}-${{ hashFiles('mise.toml') }}{% endraw %}
-
           restore-keys: |
             luarocks-{% raw %}${{ runner.os }}-{% endraw %}
-{% endif %}
+{%- endif %}
+
       - uses: jdx/mise-action@v3
         with:
           experimental: true
           cache: true
-{% if project_type == 'mise-backend' %}
+{%- if project_type == 'mise-backend' %}
+
       - name: Install dependencies
         run: mise run install
-{% endif %}
+{%- endif %}
+
       - name: Run linters
         run: mise run lint
 
       - name: Run type checker
         run: mise run typecheck
-{% if project_type == 'mise-backend' %}
+{%- if project_type == 'mise-backend' %}
+
       - name: Run tests
         run: mise run test
-{% endif %}
-{% if project_type != 'mise-backend' %}
+{%- endif %}
+{%- if project_type != 'mise-backend' %}
+
   test-nvim:
     name: Test (Neovim {% raw %}${{ matrix.nvim_version }}{% endraw %}{% if test_os_matrix %}, {% raw %}${{ matrix.os }}{% endraw %}{% endif %})
     needs: lint
@@ -63,12 +67,12 @@ jobs:
       fail-fast: false
       matrix:
         nvim_version: ["stable", "nightly"]
-{% if test_os_matrix %}
+{%- if test_os_matrix %}
         os: [ubuntu-latest, macos-latest]
     runs-on: {% raw %}${{ matrix.os }}{% endraw %}
-{% else %}
+{%- else %}
     runs-on: ubuntu-latest
-{% endif %}
+{%- endif %}
     steps:
       - uses: actions/checkout@v6
 
@@ -88,5 +92,5 @@ jobs:
 
       - name: Run tests
         run: mise run test
-{% endif %}
-{% endif %}
+{%- endif %}
+{%- endif %}
