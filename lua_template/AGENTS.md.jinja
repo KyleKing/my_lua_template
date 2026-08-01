@@ -1,0 +1,42 @@
+# Agent guidelines
+
+## Commands
+
+- `mise run ci` runs every gate: lint (stylua check + selene), typecheck (emmylua_check), and test
+- `mise run format` fixes formatting
+{%- if project_type == 'mise-backend' %}
+- `mise run test` runs the busted suite; `mise run test-file -- -f spec/<name>_spec.lua` runs one file
+{%- else %}
+- `mise run test` runs all specs headlessly; `mise run test-file -- -f <path>` runs one file
+{%- endif %}
+- `hk check --all` runs the git-hook checks against the whole tree
+
+Run `mise run ci` before reporting work as done.
+
+## Layout
+
+{% if project_type == 'mise-backend' -%}
+- `hooks/` holds the mise backend hooks; `metadata.lua` declares the plugin
+- Tests live in `spec/*_spec.lua` and run with busted
+{% elif project_type == 'nvim-config' -%}
+- `init.lua` is the entry point; modules live under `lua/`
+- Tests live in `lua/tests/*_spec.lua` and run with mini.test
+{% else -%}
+- `lua/{{ plugin_slug }}/init.lua` is the module entry point; `plugin/init.lua` only guards double-loading and requires it
+- Specs live in `lua/{{ plugin_slug }}/tests/*_spec.lua` and run with mini.test via `scripts/minimal_init.lua`
+- `deps/mini.nvim` is a vendored test dependency cloned by the `deps-mini-nvim` task; never edit it
+{%- endif %}
+
+## Conventions
+
+- 4-space indentation, enforced by stylua; selene and emmylua_check must also pass, and emmylua treats warnings as errors
+- Annotate public functions with LuaCATS comments; `.emmyrc.json` configures the checker and `.luarc.json` configures the editor LSP
+{%- if project_type != 'mise-backend' %}
+- In specs, bind mini.test locally (`local MiniTest = require("mini.test")`) instead of relying on the runtime global, so the type checker can resolve it
+- Headless Neovim does not exit after a failed `-c` command; keep every Lua entry point in mise tasks wrapped in `pcall` with an explicit `cquit 1`
+{%- endif %}
+{%- if use_cz %}
+- Commit messages follow Conventional Commits (`feat:`, `fix:`, `build:`); commitizen enforces this in the commit-msg hook
+{%- endif %}
+
+A directory may add its own `AGENTS.md` to extend or override this file for the code under it. Template updates never overwrite any `AGENTS.md`.

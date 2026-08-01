@@ -9,6 +9,7 @@ _skip_if_exists:
   - LICENSE
   - DESIGN.md
   - AGENTS.md
+  - "**/AGENTS.md"
 
 _tasks:
   - git init
