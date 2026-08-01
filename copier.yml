@@ -12,7 +12,7 @@ _skip_if_exists:
 
 _tasks:
   - git init
-  - python _copier_post_generation.py
+  - python3 _copier_post_generation.py
 
 _message_after_copy: |
   The '{{ project_name }}' Lua project has been initialized!

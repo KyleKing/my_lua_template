@@ -1,0 +1,72 @@
+---
+name: CI
+
+"on":
+  pull_request: null
+  push:
+    branches: [main]
+
+jobs:
+  generate:
+    name: Generate (${{ matrix.project_type }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        project_type: [mise-backend, nvim-config, nvim-plugin]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - name: Generate project (${{ matrix.project_type }})
+        run: |
+          uvx copier copy --trust --defaults \
+            --data development_branch=main \
+            --data project_name=test-template.nvim \
+            --data "project_description=Generated in CI" \
+            --data "author_name=Carl The Template" \
+            --data author_email=ctt@ctt.ctt \
+            --data author_username=user_ctt \
+            --data project_type=${{ matrix.project_type }} \
+            . "$RUNNER_TEMP/generated"
+
+      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        if: matrix.project_type != 'mise-backend'
+        with:
+          experimental: true
+          cache: true
+
+      - name: Install Neovim
+        if: matrix.project_type != 'mise-backend'
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+
+      - name: Install tools
+        if: matrix.project_type != 'mise-backend'
+        working-directory: ${{ runner.temp }}/generated
+        run: |
+          mise trust
+          mise install
+
+      - name: Run CI gates
+        if: matrix.project_type == 'nvim-plugin'
+        working-directory: ${{ runner.temp }}/generated
+        run: mise run ci
+
+      # nvim-config renders a test runner but no specs, so run only the
+      # static gates here.
+      - name: Run lint and typecheck
+        if: matrix.project_type == 'nvim-config'
+        working-directory: ${{ runner.temp }}/generated
+        run: |
+          mise run lint
+          mise run typecheck
+
+      - name: Validate hk config
+        if: matrix.project_type != 'mise-backend'
+        working-directory: ${{ runner.temp }}/generated
+        run: mise exec -- pkl eval hk.pkl
