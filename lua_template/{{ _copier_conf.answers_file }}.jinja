@@ -11,7 +11,7 @@ lua_version: '{{ lua_version }}'
 {% if project_type == 'nvim-plugin' -%}
 plugin_slug: {{ plugin_slug }}
 {% endif -%}
-project_description: {{ project_description }}
+project_description: {{ project_description | tojson }}
 project_name: {{ project_name }}
 project_type: {{ project_type }}
 repository_namespace: {{ repository_namespace }}
