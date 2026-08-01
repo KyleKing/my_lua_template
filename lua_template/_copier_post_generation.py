@@ -39,7 +39,13 @@ def cleanup_conditional_directories(project_type: str | None) -> None:
 
 def cleanup_empty_renders() -> None:
     """Remove files whose conditional content rendered to nothing."""
-    for pattern in ["init.lua", "lua/init.lua", "plugin/init.lua", ".github/workflows/*.yml"]:
+    for pattern in [
+        "init.lua",
+        "lua/init.lua",
+        "plugin/init.lua",
+        "scripts/minimal_init.lua",
+        ".github/workflows/*.yml",
+    ]:
         for target in ROOT.glob(pattern):
             if target.is_file() and not target.read_text().strip():
                 target.unlink()
