@@ -1,20 +1,19 @@
-[tools]
-hk = "1.53.0"
 {% if project_type == 'mise-backend' -%}
-lua = "{{ lua_version }}"
-{% endif -%}
-pkl = "latest"
-stylua = "2.5.2"
-"cargo:selene" = "0.31.0"
-{% if use_cz -%}
-"pipx:commitizen" = "latest"
-{% endif -%}
-"pipx:toml-sort" = "latest"
-{% if project_type == 'mise-backend' -%}
+[tasks.ci]
+description = "Run all CI checks"
+depends = ["lint", "typecheck", "test"]
+
+[tasks.format]
+description = "Format code using stylua (fix mode)"
+run = "stylua hooks/ spec/"
 
 [tasks.install]
 description = "Install dependencies with luarocks"
 run = "luarocks install --tree=.luarocks --only-deps ."
+
+[tasks.lint]
+description = "Format code using stylua (check mode)"
+run = "stylua hooks/ spec/ --check"
 
 [tasks.test]
 description = "Run all tests with busted"
@@ -26,7 +25,25 @@ run = "busted {% raw %}{{flag(name='file')}}{% endraw %}"
 usage = '''
 flag "-f --file"
 '''
-{% else -%}
+
+[tasks.typecheck]
+description = "Check for errors with selene"
+run = "selene hooks/ spec/"
+
+[tools]
+hk = "1.53.0"
+lua = "{{ lua_version }}"
+pkl = "latest"
+stylua = "2.5.2"
+"cargo:selene" = "0.31.0"
+{%- if use_cz %}
+"pipx:commitizen" = "latest"
+{%- endif %}
+"pipx:toml-sort" = "latest"
+{%- else -%}
+[tasks.ci]
+description = "Run all CI checks"
+depends = ["lint", "typecheck", "test"]
 
 [tasks."deps-mini-nvim"]
 description = "Download 'mini.nvim' to use its 'mini.test' testing module"
@@ -39,17 +56,33 @@ fi
 '''
 sources = ["deps/mini.nvim"]
 
+[tasks.format]
+description = "Format code using stylua (fix mode)"
+{%- if project_type == 'nvim-config' %}
+run = "stylua lua/"
+{%- else %}
+run = "stylua plugin/ lua/ scripts/"
+{%- endif %}
+
+[tasks.lint]
+description = "Format code using stylua (check mode)"
+{%- if project_type == 'nvim-config' %}
+run = "stylua lua/ --check"
+{%- else %}
+run = "stylua plugin/ lua/ scripts/ --check"
+{%- endif %}
+
 # Note on the -c bodies below: headless Neovim does not exit after a failed -c
 # command, so every Lua entry point is wrapped in pcall with an explicit
 # `cquit 1`. Without the guard, an error hangs the process until the CI timeout.
 [tasks.test]
 depends = ["deps-mini-nvim"]
 description = "Run all test files"
-{% if project_type == 'nvim-config' -%}
+{%- if project_type == 'nvim-config' %}
 run = "nvim --headless --noplugin -u ./init.lua -c \"lua local ok, err = pcall(function() require('tests.init').run_all() end) if not ok then io.stderr:write(tostring(err) .. '\\n') vim.cmd('cquit 1') end\""
-{% else -%}
+{%- else %}
 run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua local ok, err = pcall(function() require('{{ plugin_slug }}.tests.init').run_all() end) if not ok then io.stderr:write(tostring(err) .. '\\n') vim.cmd('cquit 1') end\""
-{% endif %}
+{%- endif %}
 
 [tasks.test-file]
 depends = ["deps-mini-nvim"]
@@ -58,38 +91,22 @@ run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua local o
 usage = '''
 flag "-f --file"
 '''
-{% endif %}
-
-[tasks.lint]
-description = "Format code using stylua (check mode)"
-{% if project_type == 'mise-backend' -%}
-run = "stylua hooks/ spec/ --check"
-{% elif project_type == 'nvim-config' -%}
-run = "stylua lua/ --check"
-{% else -%}
-run = "stylua plugin/ lua/ scripts/ --check"
-{% endif %}
-
-[tasks.format]
-description = "Format code using stylua (fix mode)"
-{% if project_type == 'mise-backend' -%}
-run = "stylua hooks/ spec/"
-{% elif project_type == 'nvim-config' -%}
-run = "stylua lua/"
-{% else -%}
-run = "stylua plugin/ lua/ scripts/"
-{% endif %}
 
 [tasks.typecheck]
 description = "Check for errors with selene"
-{% if project_type == 'mise-backend' -%}
-run = "selene hooks/ spec/"
-{% elif project_type == 'nvim-config' -%}
+{%- if project_type == 'nvim-config' %}
 run = "selene lua/"
-{% else -%}
+{%- else %}
 run = "selene plugin/ lua/ scripts/"
-{% endif %}
+{%- endif %}
 
-[tasks.ci]
-description = "Run all CI checks"
-depends = ["lint", "typecheck", "test"]
+[tools]
+hk = "1.53.0"
+pkl = "latest"
+stylua = "2.5.2"
+"cargo:selene" = "0.31.0"
+{%- if use_cz %}
+"pipx:commitizen" = "latest"
+{%- endif %}
+"pipx:toml-sort" = "latest"
+{%- endif %}
