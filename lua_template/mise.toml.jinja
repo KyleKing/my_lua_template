@@ -67,7 +67,7 @@ run = "stylua hooks/ spec/ --check"
 {% elif project_type == 'nvim-config' -%}
 run = "stylua lua/ --check"
 {% else -%}
-run = "stylua plugin/ lua/ --check"
+run = "stylua plugin/ lua/ scripts/ --check"
 {% endif %}
 
 [tasks.format]
@@ -77,7 +77,7 @@ run = "stylua hooks/ spec/"
 {% elif project_type == 'nvim-config' -%}
 run = "stylua lua/"
 {% else -%}
-run = "stylua plugin/ lua/"
+run = "stylua plugin/ lua/ scripts/"
 {% endif %}
 
 [tasks.typecheck]
@@ -87,7 +87,7 @@ run = "selene hooks/ spec/"
 {% elif project_type == 'nvim-config' -%}
 run = "selene lua/"
 {% else -%}
-run = "selene plugin/ lua/"
+run = "selene plugin/ lua/ scripts/"
 {% endif %}
 
 [tasks.ci]

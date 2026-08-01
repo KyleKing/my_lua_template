@@ -7,9 +7,7 @@ vim.cmd([[set packpath=/tmp/{{ project_name }}/site]])
 
 -- Add mini.nvim to runtimepath
 local mini_path = vim.fn.stdpath("config") .. "/deps/mini.nvim"
-if vim.fn.isdirectory(mini_path) == 0 then
-    mini_path = vim.fn.getcwd() .. "/deps/mini.nvim"
-end
+if vim.fn.isdirectory(mini_path) == 0 then mini_path = vim.fn.getcwd() .. "/deps/mini.nvim" end
 vim.opt.runtimepath:append(mini_path)
 
 -- Add plugin to runtimepath
