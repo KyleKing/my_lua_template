@@ -19,7 +19,7 @@ _message_after_copy: |
 
   1. Review the changes and commit
   2. Install mise tools: `mise install`
-  3. Install git hooks: `pre-commit install`
+  3. Install git hooks: `hk install`
   4. Run `mise run lint` to verify setup
   5. If this is a new project, create the GitHub repo:
 
@@ -102,3 +102,21 @@ include_ci:
   type: bool
   help: Include GitHub Actions CI workflow
   default: true
+
+test_os_matrix:
+  type: bool
+  help: Run CI tests on macOS in addition to Ubuntu
+  default: false
+  when: "{{ include_ci and project_type != 'mise-backend' }}"
+
+plugin_slug:
+  type: str
+  help: This is an internal variable where the default should be accepted.
+  default: "{% if project_type == 'nvim-plugin' %}{{ project_name | replace('-', '_') }}{% endif %}"
+  when: false
+
+config_tests_dir:
+  type: str
+  help: This is an internal variable where the default should be accepted.
+  default: "{% if project_type == 'nvim-config' %}tests{% endif %}"
+  when: false

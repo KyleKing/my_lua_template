@@ -7,7 +7,7 @@ Thank you for considering contributing to {{ project_name }}!
 ### Prerequisites
 
 - [mise](https://mise.jdx.dev/) - Tool version manager
-- [pre-commit](https://pre-commit.com/) - Git hook framework
+- [hk](https://hk.jdx.dev/) - Git hook manager (installed via mise)
 - Lua {{ lua_version }}
 - [stylua](https://github.com/JohnnyMorganz/StyLua) - Lua formatter
 - [selene](https://github.com/Kampfkarren/selene) - Lua linter
@@ -33,8 +33,8 @@ mise install
 mise run install
 {% endif -%}
 
-# Install pre-commit hooks
-pre-commit install
+# Install git hooks
+hk install
 
 # Verify setup
 mise run ci
@@ -67,9 +67,12 @@ mise run test
 {% if project_type == 'mise-backend' -%}
 # Run specific test file
 mise run test-file -- -f spec/specific_spec.lua
+{% elif project_type == 'nvim-config' -%}
+# Run specific test file
+mise run test-file -- -f lua/tests/example_spec.lua
 {% else -%}
 # Run specific test file
-mise run test-file -- -f test/specific_test.lua
+mise run test-file -- -f lua/{{ plugin_slug }}/tests/setup_spec.lua
 {% endif -%}
 
 # Run with coverage

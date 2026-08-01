@@ -1,0 +1,19 @@
+-- {{ project_name }} main module
+
+local M = {}
+
+--- Default configuration
+M.config = {
+    -- Add default configuration options here
+}
+
+--- Setup function called by users
+---@param opts table|nil User configuration options
+function M.setup(opts)
+    opts = opts or {}
+    M.config = vim.tbl_deep_extend("force", M.config, opts)
+
+    -- Initialize plugin functionality here
+end
+
+return M

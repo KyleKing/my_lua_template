@@ -1,7 +1,13 @@
 [tools]
+hk = "1.53.0"
 lua = "{{ lua_version }}"
-stylua = "latest"
-"cargo:selene" = "latest"
+pkl = "latest"
+stylua = "2.5.2"
+"cargo:selene" = "0.31.0"
+{% if use_cz -%}
+"pipx:commitizen" = "latest"
+{% endif -%}
+"pipx:toml-sort" = "latest"
 {% if project_type == 'mise-backend' -%}
 
 [tasks.install]
@@ -31,19 +37,22 @@ fi
 '''
 sources = ["deps/mini.nvim"]
 
+# Note on the -c bodies below: headless Neovim does not exit after a failed -c
+# command, so every Lua entry point is wrapped in pcall with an explicit
+# `cquit 1`. Without the guard, an error hangs the process until the CI timeout.
 [tasks.test]
 depends = ["deps-mini-nvim"]
 description = "Run all test files"
 {% if project_type == 'nvim-config' -%}
-run = "nvim --headless --noplugin -u ./init.lua -c \"lua require('tests.init').run_all()\""
+run = "nvim --headless --noplugin -u ./init.lua -c \"lua local ok, err = pcall(function() require('tests.init').run_all() end) if not ok then io.stderr:write(tostring(err) .. '\\n') vim.cmd('cquit 1') end\""
 {% else -%}
-run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua require('{{ project_name | replace('-', '_') }}.tests.init').run_all()\""
+run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua local ok, err = pcall(function() require('{{ plugin_slug }}.tests.init').run_all() end) if not ok then io.stderr:write(tostring(err) .. '\\n') vim.cmd('cquit 1') end\""
 {% endif %}
 
 [tasks.test-file]
 depends = ["deps-mini-nvim"]
 description = "Run test from specified file"
-run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua MiniTest.run_file('{% raw %}{{flag(name='file')}}{% endraw %}')\""
+run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua local ok, err = pcall(MiniTest.run_file, vim.fn.fnamemodify('{% raw %}{{flag(name='file')}}{% endraw %}', ':p')) if not ok then io.stderr:write(tostring(err) .. '\\n') vim.cmd('cquit 1') end\""
 usage = '''
 flag "-f --file"
 '''
@@ -56,7 +65,7 @@ run = "stylua hooks/ spec/ --check"
 {% elif project_type == 'nvim-config' -%}
 run = "stylua lua/ --check"
 {% else -%}
-run = "stylua plugin/ lua/ test/ --check"
+run = "stylua plugin/ lua/ --check"
 {% endif %}
 
 [tasks.format]
@@ -66,7 +75,7 @@ run = "stylua hooks/ spec/"
 {% elif project_type == 'nvim-config' -%}
 run = "stylua lua/"
 {% else -%}
-run = "stylua plugin/ lua/ test/"
+run = "stylua plugin/ lua/"
 {% endif %}
 
 [tasks.typecheck]
@@ -76,7 +85,7 @@ run = "selene hooks/ spec/"
 {% elif project_type == 'nvim-config' -%}
 run = "selene lua/"
 {% else -%}
-run = "selene plugin/ lua/ test/"
+run = "selene plugin/ lua/"
 {% endif %}
 
 [tasks.ci]

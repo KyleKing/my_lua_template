@@ -1,0 +1,23 @@
+-- Tests for {{ project_name }}
+
+local MiniTest = require("mini.test")
+
+local T = MiniTest.new_set()
+
+T["setup"] = function()
+    local {{ plugin_slug }} = require("{{ plugin_slug }}")
+
+    -- Test default setup
+    {{ plugin_slug }}.setup()
+    MiniTest.expect.truthy({{ plugin_slug }}.config)
+end
+
+T["setup with options"] = function()
+    local {{ plugin_slug }} = require("{{ plugin_slug }}")
+
+    -- Test custom options
+    {{ plugin_slug }}.setup({ custom_option = true })
+    MiniTest.expect.equality({{ plugin_slug }}.config.custom_option, true)
+end
+
+return T

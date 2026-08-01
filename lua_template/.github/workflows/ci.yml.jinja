@@ -52,20 +52,24 @@ jobs:
 
       - name: Run type checker
         run: mise run typecheck
-
+{% if project_type == 'mise-backend' %}
       - name: Run tests
         run: mise run test
+{% endif -%}
 
 {% if project_type != 'mise-backend' -%}
   test-nvim:
-    name: Test (Neovim {% raw %}${{ matrix.nvim_version }}{% endraw %})
+    name: Test (Neovim {% raw %}${{ matrix.nvim_version }}{% endraw %}{% if test_os_matrix %}, {% raw %}${{ matrix.os }}{% endraw %}{% endif %})
     needs: lint
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
         nvim_version: ["stable", "nightly"]
-    runs-on: ubuntu-latest
+{% if test_os_matrix %}        os: [ubuntu-latest, macos-latest]
+    runs-on: {% raw %}${{ matrix.os }}{% endraw %}
+{% else %}    runs-on: ubuntu-latest
+{% endif %}
     steps:
       - uses: actions/checkout@v6
 
