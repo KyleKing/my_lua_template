@@ -15,9 +15,7 @@ end
 
 function M.run_all()
     local files = vim.fn.glob(SPEC_DIR .. "/*_spec.lua", false, true)
-    if #files == 0 then
-        error("No *_spec.lua files found in " .. SPEC_DIR)
-    end
+    if #files == 0 then error("No *_spec.lua files found in " .. SPEC_DIR) end
     table.sort(files)
     run_files(files)
 end
