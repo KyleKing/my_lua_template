@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
+  "runtime": {
+{%- if project_type == 'mise-backend' %}
+    "version": "Lua{{ lua_version }}"
+{%- else %}
+    "version": "LuaJIT"
+{%- endif %}
+  },
+  "workspace": {
+    "ignoreDir": [
+{%- if project_type == 'mise-backend' %}
+      ".luarocks"
+{%- else %}
+      "deps"
+{%- endif %}
+    ]{% if project_type != 'mise-backend' %},
+    "library": [
+      "deps/mini.nvim/lua"
+    ]
+{%- endif %}
+  }
+}

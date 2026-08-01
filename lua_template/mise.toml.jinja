@@ -12,8 +12,8 @@ description = "Install dependencies with luarocks"
 run = "luarocks install --tree=.luarocks --only-deps ."
 
 [tasks.lint]
-description = "Format code using stylua (check mode)"
-run = "stylua hooks/ spec/ --check"
+description = "Check formatting with stylua and lint with selene"
+run = ["stylua hooks/ spec/ --check", "selene hooks/ spec/"]
 
 [tasks.test]
 description = "Run all tests with busted"
@@ -27,8 +27,8 @@ flag "-f --file"
 '''
 
 [tasks.typecheck]
-description = "Check for errors with selene"
-run = "selene hooks/ spec/"
+description = "Type check with emmylua_check"
+run = "emmylua_check --warnings-as-errors ."
 
 [tools]
 hk = "1.53.0"
@@ -40,6 +40,7 @@ stylua = "2.5.2"
 "pipx:commitizen" = "latest"
 {%- endif %}
 "pipx:toml-sort" = "latest"
+"ubi:EmmyLuaLs/emmylua-analyzer-rust[exe=emmylua_check]" = "0.24.0"
 {%- else -%}
 [tasks.ci]
 description = "Run all CI checks"
@@ -64,11 +65,11 @@ run = "stylua plugin/ lua/ scripts/"
 {%- endif %}
 
 [tasks.lint]
-description = "Format code using stylua (check mode)"
+description = "Check formatting with stylua and lint with selene"
 {%- if project_type == 'nvim-config' %}
-run = "stylua lua/ --check"
+run = ["stylua lua/ --check", "selene lua/"]
 {%- else %}
-run = "stylua plugin/ lua/ scripts/ --check"
+run = ["stylua plugin/ lua/ scripts/ --check", "selene plugin/ lua/ scripts/"]
 {%- endif %}
 
 # Note on the -c bodies below: headless Neovim does not exit after a failed -c
@@ -92,12 +93,9 @@ flag "-f --file"
 '''
 
 [tasks.typecheck]
-description = "Check for errors with selene"
-{%- if project_type == 'nvim-config' %}
-run = "selene lua/"
-{%- else %}
-run = "selene plugin/ lua/ scripts/"
-{%- endif %}
+depends = ["deps-mini-nvim"]
+description = "Type check with emmylua_check"
+run = "emmylua_check --warnings-as-errors ."
 
 [tools]
 hk = "1.53.0"
@@ -108,4 +106,5 @@ stylua = "2.5.2"
 "pipx:commitizen" = "latest"
 {%- endif %}
 "pipx:toml-sort" = "latest"
+"ubi:EmmyLuaLs/emmylua-analyzer-rust[exe=emmylua_check]" = "0.24.0"
 {%- endif %}
