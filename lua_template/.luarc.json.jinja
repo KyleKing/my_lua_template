@@ -9,25 +9,25 @@
   },
   "workspace": {
     "library": [
-{% if project_type == 'mise-backend' -%}
+{% if project_type == 'mise-backend' %}
       "hooks/",
       "metadata.lua"
-{% elif project_type == 'nvim-plugin' -%}
+{% elif project_type == 'nvim-plugin' %}
       "plugin/",
       "lua/"
-{% else -%}
+{% else %}
       "lua/"
-{% endif -%}
+{% endif %}
     ],
     "ignoreDir": [
-{% if project_type == 'mise-backend' -%}
+{% if project_type == 'mise-backend' %}
       ".luarocks",
-{% endif -%}
+{% endif %}
       ".git"
     ]
   },
   "diagnostics": {
-{% if project_type == 'mise-backend' -%}
+{% if project_type == 'mise-backend' %}
     "globals": [
       "PLUGIN",
       "RUNTIME"
@@ -35,11 +35,11 @@
     "disable": [
       "lowercase-global"
     ]
-{% else -%}
+{% else %}
     "globals": [
       "vim"
     ]
-{% endif -%}
+{% endif %}
   },
   "format": {
     "enable": false
