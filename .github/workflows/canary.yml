@@ -1,0 +1,33 @@
+name: Canary
+
+# workflow_dispatch only for now: the children's template-adoption commits
+# (`.copier-answers.yml` pointed at this template) are not yet pushed to
+# GitHub, so a push-triggered canary would fail spuriously. Once the children
+# are pushed, this should become a required pre-bump gate (e.g. triggered
+# from bump_version.yml before tagging).
+on:
+  workflow_dispatch: null
+
+jobs:
+  canary:
+    name: Canary
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+
+      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+        with:
+          experimental: true
+          cache: true
+
+      - name: Install Neovim
+        uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: stable
+
+      - name: Run canary
+        run: python3 scripts/canary.py

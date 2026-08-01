@@ -19,6 +19,9 @@ ENV/
 # Copier
 .copier-answers.yml
 
+# Canary testing
+.canary-cache/
+
 # CTT
 .ctt/
 

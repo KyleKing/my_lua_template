@@ -1,0 +1,17 @@
+{
+    "$comment": "GitHub state may lag local sibling checkouts (e.g. unpushed template-adoption commits). Set CANARY_SIBLINGS=1 to test local checkouts at '../<name>' instead of cloning 'url'.",
+    "repos": [
+        {
+            "name": "patch_it.nvim",
+            "url": "https://github.com/KyleKing/patch_it.nvim"
+        },
+        {
+            "name": "spaghetti-comb.nvim",
+            "url": "https://github.com/KyleKing/spaghetti-comb.nvim"
+        },
+        {
+            "name": "codanna.nvim",
+            "url": "https://github.com/KyleKing/codanna.nvim"
+        }
+    ]
+}
