@@ -9,7 +9,7 @@ T["setup"] = function()
 
     -- Test default setup
     {{ plugin_slug }}.setup()
-    MiniTest.expect.truthy({{ plugin_slug }}.config)
+    MiniTest.expect.no_equality({{ plugin_slug }}.config, nil)
 end
 
 T["setup with options"] = function()
