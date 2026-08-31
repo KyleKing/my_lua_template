@@ -13,7 +13,6 @@ This document describes the structure and files included in my_lua_template.
 - `.gitignore` - Git ignore patterns for template repo
 - `.editorconfig` - Editor configuration for template development
 - `.cz.toml` - Commitizen configuration for template repo
-- `ctt.toml` - CTT (Copier Template Tool) configuration
 
 ### Post-Generation Scripts
 
@@ -77,7 +76,6 @@ my_lua_template/
 ├── .gitignore                         # Template repo gitignore
 ├── .editorconfig                      # Template repo editorconfig
 ├── .cz.toml                          # Template repo commitizen
-├── ctt.toml                          # CTT configuration
 └── lua_template/                      # Template subdirectory
     ├── _copier_post_generation.py     # Post-generation cleanup
     ├── {{ _copier_conf.answers_file }}.jinja
