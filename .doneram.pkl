@@ -1,0 +1,170 @@
+// Tool and GitHub Action versions shipped to generated projects. Each one is a
+// literal in the file that consumes it. This file records where those literals
+// are and how to resolve the latest value. lua is absent on purpose, because it
+// sets the language level a generated project targets and stays a copier answer.
+//
+// A site that matches a different number of times than `expect` fails the run.
+// A pattern that silently stops matching is how a pin goes stale unnoticed.
+//
+// The schema is inlined so this file evaluates today. It amends doneram's
+// published Config.pkl once doneram ships a pkl package.
+
+class Site {
+  /// Repo-relative path to the file holding the literal.
+  file: String
+  /// Regex with exactly one capture group around the version.
+  pattern: String
+  expect: Int(this > 0) = 1
+}
+
+/// Keeps taking updates below `max`, so a known break blocks only the majors
+/// past it rather than freezing the pin.
+class Hold {
+  reason: String
+  max: String?
+}
+
+class Tool {
+  resolver: String = "mise"
+  /// Name to query when it differs from the map key, e.g. "pipx:commitizen".
+  resolverName: String?
+  sites: Listing<Site>
+  hold: Hold?
+}
+
+local miseToml = "lua_template/mise.toml.jinja"
+local hkPkl = "lua_template/hk.pkl.jinja"
+local ciYml = "lua_template/.github/workflows/ci.yml.jinja"
+local bumpYml = "lua_template/.github/workflows/bump_version.yml.jinja"
+local rootCiYml = ".github/workflows/ci.yml"
+local rootCanaryYml = ".github/workflows/canary.yml"
+local rootBumpYml = ".github/workflows/bump_version.yml"
+local rootFreshnessYml = ".github/workflows/freshness.yml"
+
+/// A bare mise tool key, e.g. `stylua = "2.5.2"`. The template renders one
+/// [tools] block per project_type branch, so most keys appear more than once.
+local function misePin(key: String, count: Int): Site = new {
+  file = miseToml
+  pattern = #"^\#(key) = "([\d.]+)""#
+  expect = count
+}
+
+/// A quoted mise tool key, e.g. `"cargo:selene" = "0.31.0"`.
+local function quotedMisePin(key: String, count: Int): Site = new {
+  file = miseToml
+  pattern = #"^"\#(key)" = "([\d.]+)""#
+  expect = count
+}
+
+/// A `uses: owner/repo@<sha> # <tag>` GitHub Action pin, one capture group
+/// spanning the sha and the tag together, since github-action patches both
+/// as a single resolved value.
+local function actionPin(action: String, sourceFile: String, count: Int): Site = new {
+  file = sourceFile
+  pattern = #"\#(action)@([0-9a-f]{40} # v[\d.]+)"#
+  expect = count
+}
+
+tools: Mapping<String, Tool> = new {
+  ["action-gh-release"] = new {
+    resolver = "github-action"
+    resolverName = "softprops/action-gh-release"
+    sites = new {
+      actionPin("softprops/action-gh-release", bumpYml, 1)
+      actionPin("softprops/action-gh-release", rootBumpYml, 1)
+    }
+  }
+  ["action-setup-vim"] = new {
+    resolver = "github-action"
+    resolverName = "rhysd/action-setup-vim"
+    sites = new {
+      actionPin("rhysd/action-setup-vim", ciYml, 1)
+      actionPin("rhysd/action-setup-vim", rootCiYml, 1)
+      actionPin("rhysd/action-setup-vim", rootCanaryYml, 1)
+    }
+  }
+  ["cache"] = new {
+    resolver = "github-action"
+    resolverName = "actions/cache"
+    sites = new { actionPin("actions/cache", ciYml, 1) }
+  }
+  ["checkout"] = new {
+    resolver = "github-action"
+    resolverName = "actions/checkout"
+    sites = new {
+      actionPin("actions/checkout", ciYml, 2)
+      actionPin("actions/checkout", bumpYml, 1)
+      actionPin("actions/checkout", rootCiYml, 1)
+      actionPin("actions/checkout", rootCanaryYml, 1)
+      actionPin("actions/checkout", rootFreshnessYml, 1)
+      actionPin("actions/checkout", rootBumpYml, 1)
+    }
+  }
+  ["create-pull-request"] = new {
+    resolver = "github-action"
+    resolverName = "peter-evans/create-pull-request"
+    sites = new { actionPin("peter-evans/create-pull-request", rootFreshnessYml, 1) }
+  }
+  ["emmylua-analyzer-rust"] = new {
+    resolverName = "ubi:EmmyLuaLs/emmylua-analyzer-rust[exe=emmylua_check]"
+    sites = new {
+      new Site {
+        file = miseToml
+        pattern = #"^"ubi:EmmyLuaLs/emmylua-analyzer-rust\[exe=emmylua_check\]" = "([\d.]+)""#
+        expect = 2
+      }
+    }
+  }
+  ["hk"] = new {
+    sites = new {
+      misePin("hk", 2)
+      // amends and import each carry the version twice, and pkl cannot
+      // interpolate a local into either, so all four literals move together.
+      new Site {
+        file = hkPkl
+        pattern = #"download/v([\d.]+)/hk@"#
+        expect = 2
+      }
+      new Site {
+        file = hkPkl
+        pattern = #"hk@([\d.]+)#"#
+        expect = 2
+      }
+      new Site {
+        file = hkPkl
+        pattern = #"min_hk_version = "([\d.]+)""#
+      }
+    }
+  }
+  ["mise-action"] = new {
+    resolver = "github-action"
+    resolverName = "jdx/mise-action"
+    sites = new {
+      actionPin("jdx/mise-action", ciYml, 2)
+      actionPin("jdx/mise-action", rootCiYml, 1)
+      actionPin("jdx/mise-action", rootCanaryYml, 1)
+      actionPin("jdx/mise-action", rootFreshnessYml, 1)
+    }
+  }
+  ["selene"] = new {
+    resolverName = "cargo:selene"
+    sites = new { quotedMisePin("cargo:selene", 2) }
+  }
+  ["setup-go"] = new {
+    resolver = "github-action"
+    resolverName = "actions/setup-go"
+    sites = new { actionPin("actions/setup-go", rootFreshnessYml, 1) }
+  }
+  ["setup-uv"] = new {
+    resolver = "github-action"
+    resolverName = "astral-sh/setup-uv"
+    sites = new {
+      actionPin("astral-sh/setup-uv", rootCiYml, 1)
+      actionPin("astral-sh/setup-uv", rootCanaryYml, 1)
+      actionPin("astral-sh/setup-uv", rootFreshnessYml, 1)
+    }
+  }
+  ["stylua"] = new {
+    sites = new { misePin("stylua", 2) }
+  }
+}
