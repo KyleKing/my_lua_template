@@ -1,0 +1,14 @@
+{% if project_type == 'nvim-config' -%}
+-- Key mappings. The leader key is set in init.lua before this module loads.
+
+local map = vim.keymap.set
+
+map("n", "<leader>w", "<cmd>write<cr>", { desc = "Write buffer" })
+map("n", "<leader>q", "<cmd>quit<cr>", { desc = "Quit window" })
+map("n", "<esc>", "<cmd>nohlsearch<cr>", { desc = "Clear search highlight" })
+
+map("n", "<C-h>", "<C-w>h", { desc = "Focus window left" })
+map("n", "<C-j>", "<C-w>j", { desc = "Focus window below" })
+map("n", "<C-k>", "<C-w>k", { desc = "Focus window above" })
+map("n", "<C-l>", "<C-w>l", { desc = "Focus window right" })
+{% endif -%}

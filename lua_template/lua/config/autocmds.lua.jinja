@@ -1,0 +1,21 @@
+{% if project_type == 'nvim-config' -%}
+-- Autocommands
+
+local group = vim.api.nvim_create_augroup("{{ project_name | replace('.', '_') | replace('-', '_') }}", { clear = true })
+
+vim.api.nvim_create_autocmd("TextYankPost", {
+    group = group,
+    desc = "Briefly highlight yanked text",
+    callback = function() vim.highlight.on_yank() end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+    group = group,
+    desc = "Trim trailing whitespace on save",
+    callback = function()
+        local view = vim.fn.winsaveview()
+        vim.cmd([[keeppatterns %s/\s\+$//e]])
+        vim.fn.winrestview(view)
+    end,
+})
+{% endif -%}

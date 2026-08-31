@@ -42,6 +42,7 @@ def cleanup_empty_renders() -> None:
     for pattern in [
         "init.lua",
         "lua/init.lua",
+        "lua/config/*.lua",
         "plugin/init.lua",
         "scripts/minimal_init.lua",
         ".github/workflows/*.yml",
@@ -51,7 +52,7 @@ def cleanup_empty_renders() -> None:
                 target.unlink()
                 print(f"Removed empty render: {target.relative_to(ROOT)}")
 
-    for directory in ["plugin", "scripts", "lua", ".github/workflows", ".github"]:
+    for directory in ["plugin", "scripts", "lua/config", "lua", ".github/workflows", ".github"]:
         target = ROOT / directory
         if target.is_dir():
             gitkeep = target / ".gitkeep"

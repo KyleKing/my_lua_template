@@ -1,8 +1,6 @@
 {% if project_type == 'nvim-config' -%}
--- Placeholder for lua module organization
--- Create subdirectories like:
---   lua/config/options.lua
---   lua/config/keymaps.lua
---   lua/config/autocmds.lua
---   lua/config/plugins.lua
+-- Namespace for this configuration's own modules.
+--
+-- Core settings live in lua/config/. Add feature modules alongside them and
+-- require them from init.lua.
 {% endif -%}
