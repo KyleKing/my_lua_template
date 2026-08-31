@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 {%- if project_type == 'mise-backend' %}
 
       - name: Install Lua and LuaRocks
@@ -29,7 +29,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y lua{{ lua_version }} liblua{{ lua_version }}-dev luarocks
 
-      - uses: actions/cache@v5
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .luarocks
           key: luarocks-{% raw %}${{ runner.os }}-${{ hashFiles('mise.toml') }}{% endraw %}
@@ -37,7 +37,7 @@ jobs:
             luarocks-{% raw %}${{ runner.os }}-{% endraw %}
 {%- endif %}
 
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         with:
           experimental: true
           cache: true
@@ -74,15 +74,15 @@ jobs:
     runs-on: ubuntu-latest
 {%- endif %}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: jdx/mise-action@v3
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         with:
           experimental: true
           cache: true
 
       - name: Install Neovim
-        uses: rhysd/action-setup-vim@v1
+        uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1.6.1
         with:
           neovim: true
           version: {% raw %}${{ matrix.nvim_version }}{% endraw %}

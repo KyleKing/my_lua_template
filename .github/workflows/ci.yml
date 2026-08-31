@@ -6,6 +6,13 @@ name: CI
   push:
     branches: [main]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   generate:
     name: Generate (${{ matrix.project_type }})
@@ -18,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+      - uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
 
       - name: Generate project (${{ matrix.project_type }})
         run: |
@@ -32,7 +39,7 @@ jobs:
             --data project_type=${{ matrix.project_type }} \
             . "$RUNNER_TEMP/generated"
 
-      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2.4.4
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         if: matrix.project_type != 'mise-backend'
         with:
           experimental: true
@@ -40,7 +47,7 @@ jobs:
 
       - name: Install Neovim
         if: matrix.project_type != 'mise-backend'
-        uses: rhysd/action-setup-vim@v1
+        uses: rhysd/action-setup-vim@febef33995d6649302e9d88dda81e071b68f16a7 # v1.6.1
         with:
           neovim: true
           version: stable
