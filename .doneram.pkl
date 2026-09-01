@@ -40,6 +40,7 @@ local rootCiYml = ".github/workflows/ci.yml"
 local rootCanaryYml = ".github/workflows/canary.yml"
 local rootBumpYml = ".github/workflows/bump_version.yml"
 local rootFreshnessYml = ".github/workflows/freshness.yml"
+local rootMiseToml = "mise.toml"
 
 /// A bare mise tool key, e.g. `stylua = "2.5.2"`. The template renders one
 /// [tools] block per project_type branch, so most keys appear more than once.
@@ -144,6 +145,15 @@ tools: Mapping<String, Tool> = new {
       actionPin("jdx/mise-action", rootCiYml, 1)
       actionPin("jdx/mise-action", rootCanaryYml, 1)
       actionPin("jdx/mise-action", rootFreshnessYml, 1)
+    }
+  }
+  ["pkl"] = new {
+    resolver = "mise"
+    sites = new {
+      new Site {
+        file = rootMiseToml
+        pattern = #"pkl = "([\d.]+)""#
+      }
     }
   }
   ["selene"] = new {
