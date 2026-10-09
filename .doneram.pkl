@@ -127,11 +127,11 @@ tools: Mapping<String, Tool> = new {
     }
   }
   ["emmylua-analyzer-rust"] = new {
-    resolverName = "ubi:EmmyLuaLs/emmylua-analyzer-rust[exe=emmylua_check]"
+    resolverName = "github:EmmyLuaLs/emmylua-analyzer-rust[exe=emmylua_check]"
     sites = new {
       new Site {
         file = miseToml
-        pattern = #"^"ubi:EmmyLuaLs/emmylua-analyzer-rust\[exe=emmylua_check\]" = "([\d.]+)""#
+        pattern = #"^"github:EmmyLuaLs/emmylua-analyzer-rust\[exe=emmylua_check\]" = "([\d.]+)""#
         expect = 2
       }
     }
