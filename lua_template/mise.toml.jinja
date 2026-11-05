@@ -21,10 +21,8 @@ run = "busted"
 
 [tasks.test-file]
 description = "Run a specific test file"
-run = "busted {% raw %}{{flag(name='file')}}{% endraw %}"
-usage = '''
-flag "-f --file"
-'''
+usage = 'flag "-f --file <file>" help="Spec file to run" required=#true'
+run = "busted {% raw %}${usage_file?}{% endraw %}"
 
 [tasks.typecheck]
 description = "Type check with emmylua_check"
@@ -87,10 +85,8 @@ run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua local o
 [tasks.test-file]
 depends = ["deps-mini-nvim"]
 description = "Run test from specified file"
-run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua local ok, err = pcall(MiniTest.run_file, vim.fn.fnamemodify('{% raw %}{{flag(name='file')}}{% endraw %}', ':p')) if not ok then io.stderr:write(tostring(err) .. '\\n') vim.cmd('cquit 1') end\""
-usage = '''
-flag "-f --file"
-'''
+usage = 'flag "-f --file <file>" help="Spec file to run" required=#true'
+run = "nvim --headless --noplugin -u ./scripts/minimal_init.lua -c \"lua local ok, err = pcall(MiniTest.run_file, vim.fn.fnamemodify('{% raw %}${usage_file?}{% endraw %}', ':p')) if not ok then io.stderr:write(tostring(err) .. '\\n') vim.cmd('cquit 1') end\""
 
 [tasks.typecheck]
 depends = ["deps-mini-nvim"]
